@@ -104,9 +104,11 @@ class SolarEdgeCoordinator(DataUpdateCoordinator[SiteData]):
                 data.open_alerts = await self.client.async_get_open_alerts(self.site_id)
                 self._last_slow = now
             data.overview = await self.client.async_get_overview(self.site_id)
-            site_now = self._site_now()
+            # Subtract in UTC: wall-clock arithmetic in the site zone collapses the
+            # window to zero length during the hour after a spring-forward change.
+            power_end = now.replace(microsecond=0)
             data.power = await self.client.async_get_power(
-                self.site_id, site_now - POWER_WINDOW, site_now
+                self.site_id, power_end - POWER_WINDOW, power_end
             )
             if self.device_telemetry and not self.scope_denied:
                 await self._async_update_device_telemetry(data)

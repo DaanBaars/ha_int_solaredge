@@ -217,3 +217,9 @@ async def test_nonstandard_status(hass: HomeAssistant, aioclient_mock: AiohttpCl
     with pytest.raises(SolarEdgeResponseError) as info:
         await _client(hass).async_get_site(SITE_ID)
     assert info.value.detail == "error"
+
+
+async def test_window_rejects_naive_datetimes(hass: HomeAssistant) -> None:
+    """A zone-less bound is refused before any request is made."""
+    with pytest.raises(ValueError, match="timezone-aware"):
+        await _client(hass).async_get_power(SITE_ID, datetime(2026, 9, 29), END)

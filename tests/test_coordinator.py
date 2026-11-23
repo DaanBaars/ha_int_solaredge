@@ -189,6 +189,18 @@ async def test_site_without_installation_date(
     assert hass.states.get("sensor.example_home_lifetime_production").state == "unknown"
 
 
+async def test_installation_date_without_offset_uses_site_zone(
+    hass: HomeAssistant, mock_api: MockApi, aioclient_mock: AiohttpClientMocker, api_key_entry: MockConfigEntry
+) -> None:
+    """An installation date without an offset is read in the site's zone."""
+    site = load("site.json")
+    site["installationDate"] = "2021-04-01T00:00:00"
+    mock_api(site=site)
+    await _setup(hass, api_key_entry)
+    call = next(c for c in aioclient_mock.mock_calls if str(c[1]).split("?")[0] == f"{SITE}/energy")
+    assert call[1].query["from"] == "2021-04-01T05:00:00Z"
+
+
 async def test_inverter_only_site(
     hass: HomeAssistant, mock_api: MockApi, aioclient_mock: AiohttpClientMocker, api_key_entry: MockConfigEntry
 ) -> None:

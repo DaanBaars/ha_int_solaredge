@@ -16,8 +16,8 @@ Sources, read 2026-09-29:
 
 "Documented" means the rule is stated in those sources. "Tested" means a unit
 test exercises the code path against a fixture built from the documented
-shape. Nothing in this table has been verified against the live API yet; see
-[backlog.md](backlog.md).
+shape. Except where a row or note says it was observed, nothing in this table
+has been verified against the live API yet; see [backlog.md](backlog.md).
 
 ## Lifecycle
 
